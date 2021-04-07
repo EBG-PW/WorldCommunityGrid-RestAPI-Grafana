@@ -10,7 +10,7 @@ const pool = new pg.Pool({
 
 //Creat Table teams
 pool.query(`CREATE TABLE IF NOT EXISTS teams (
-    Name string,
+    Name text,
     TeamId text PRIMARY KEY,
     Captain text,
     URL text,
@@ -28,7 +28,7 @@ pool.query(`CREATE TABLE IF NOT EXISTS teams (
 
 //Creat Table teamstats
 pool.query(`CREATE TABLE IF NOT EXISTS teamstats (
-    TeamId string PRIMARY KEY,
+    TeamId text,
     CurrentMembers integer,
     CurrentMembersRank integer,
     AllTimeMembers integer,
@@ -38,6 +38,8 @@ pool.query(`CREATE TABLE IF NOT EXISTS teamstats (
     RunTimeRank integer,
     Points bigint,
     PointsRank integer,
+    Results bigint,
+    ResultsRank integer,
     RunTimePerDay integer,
     RunTimePerResult integer,
     PointsPerHourRunTime float,
@@ -54,7 +56,7 @@ pool.query(`CREATE TABLE IF NOT EXISTS teamstats (
 
 //Creat Table teamstatsprojects
 pool.query(`CREATE TABLE IF NOT EXISTS teamstatsprojects (
-    TeamId string PRIMARY KEY,
+    TeamId text,
     ProjectName text,
     RunTime bigint,
     Points bigint,
@@ -69,7 +71,7 @@ pool.query(`CREATE TABLE IF NOT EXISTS teamstatsprojects (
 
 //Creat Table teamstatsmember
 pool.query(`CREATE TABLE IF NOT EXISTS teamstatsmember (
-    TeamId string PRIMARY KEY,
+    TeamId text,
     UserName text,
     RunTime bigint,
     Points bigint,
@@ -95,7 +97,28 @@ let WriteTeam = function(Data) {
 
 let WriteTeamStats = function(Data) {
   return new Promise(function(resolve, reject) {
+    pool.query('INSERT INTO teamstats(TeamId,CurrentMembers,CurrentMembersRank,AllTimeMembers,AllTimeMembersRank,AllTimeDevices,RunTime,RunTimeRank,Points,PointsRank,Results,ResultsRank,RunTimePerDay,RunTimePerResult,PointsPerHourRunTime,PointsPerDay,PointsPerResult,ResultsPerDay) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)',[
+      Data.TeamStats.Team[0].TeamId[0], Data.TeamStats.StatisticsTotals[0].CurrentMembers[0], Data.TeamStats.StatisticsTotals[0].CurrentMembersRank[0], Data.TeamStats.StatisticsTotals[0].AllTimeMembers[0], Data.TeamStats.StatisticsTotals[0].AllTimeMembersRank[0],
+      Data.TeamStats.StatisticsTotals[0].AllTimeDevices[0], Data.TeamStats.StatisticsTotals[0].RunTime[0], Data.TeamStats.StatisticsTotals[0].RunTimeRank[0], Data.TeamStats.StatisticsTotals[0].Points[0], Data.TeamStats.StatisticsTotals[0].PointsRank[0],
+      Data.TeamStats.StatisticsTotals[0].Results[0], Data.TeamStats.StatisticsTotals[0].ResultsRank[0], Data.TeamStats.StatisticsAverages[0].RunTimePerDay[0], Data.TeamStats.StatisticsAverages[0].RunTimePerResult[0], Data.TeamStats.StatisticsAverages[0].PointsPerHourRunTime[0],
+      Data.TeamStats.StatisticsAverages[0].PointsPerDay[0], Data.TeamStats.StatisticsAverages[0].PointsPerResult[0], Data.TeamStats.StatisticsAverages[0].ResultsPerDay[0]
+    ], (err, result) => {
+      if (err) {reject(err)}
+      resolve(result)
+    });
+  });
+}
 
+let WriteTeamProjects = function(Data) {
+  return new Promise(function(resolve, reject) {
+    Data.TeamStats.TeamStatsByProjects[0].Project.map(project => {
+      pool.query('INSERT INTO teamstatsprojects(TeamId,ProjectName,RunTime,Points,Results) VALUES ($1,$2,$3,$4,$5)',[
+        Data.TeamStats.Team[0].TeamId[0], project.ProjectName[0], project.RunTime[0], project.Points[0], project.Results[0]
+      ], (err, result) => {
+        if (err) {reject(err)}
+        resolve(result)
+      });
+    });
   });
 }
 
@@ -108,5 +131,6 @@ let WriteMemberStats = function(Data) {
 module.exports = {
   WriteTeam,
   WriteTeamStats,
+  WriteTeamProjects,
   WriteMemberStats
 };
