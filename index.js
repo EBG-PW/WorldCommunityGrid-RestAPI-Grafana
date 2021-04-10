@@ -14,15 +14,19 @@ getData.getTeamData("FPC25HV6C2").then((data) => {
 });
 */
 
-getData.getTeamData("FPC25HV6C2").then((data) => {
-    console.error(util.inspect(data, false, null, true))
-    
-    Promise.all([db.WriteTeamStats(data), db.WriteTeamProjects(data)]).then((result) => {
-        console.log(result)
+getData.getTeamData("FPC25HV6C2").then((Teamsdata) => {
+    getData.getMemberData("FPC25HV6C2").then((Memberdata) => {
+        
+        Promise.all([db.WriteTeamStats(Teamsdata), db.WriteTeamProjects(Teamsdata), db.WriteMemberStats(Memberdata)]).then((result) => {
+            console.log(result)
+        }).catch((error) => {
+            console.error(error);
+        });
+
     }).catch((error) => {
         console.error(error);
     });
-    
+
 }).catch((error) => {
     console.error(error);
 });

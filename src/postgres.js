@@ -1,4 +1,5 @@
 const pg = require('pg');
+const util = require('util')
 
 const pool = new pg.Pool({
     user: process.env.DB_USER,
@@ -124,7 +125,16 @@ let WriteTeamProjects = function(Data) {
 
 let WriteMemberStats = function(Data) {
   return new Promise(function(resolve, reject) {
-
+    Data.TeamMemberDetails.TeamMember.map(Member => {
+      if(Member.Name[0] !== "Anonymous"){
+        pool.query('INSERT INTO teamstatsmember(TeamId,UserName,RunTime,Points,Results) VALUES ($1,$2,$3,$4,$5)',[
+          Data.TeamMemberDetails.Team[0].TeamId[0], Member.Name[0], Member.StatisticsTotals[0].RunTime[0], Member.StatisticsTotals[0].Points[0], Member.StatisticsTotals[0].Results[0]
+        ], (err, result) => {
+          if (err) {reject(err)}
+          resolve(result)
+        });
+      }
+    });
   });
 }
 
