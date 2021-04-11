@@ -13,7 +13,27 @@ getData.getTeamData("FPC25HV6C2").then((data) => {
     console.error(error);
 });
 */
+db.GetTeams().then((data) => {
+    data.map(TeamID => {
+        getData.getMemberData(TeamID.teamid).then((Memberdata) => {
+        
+            Promise.all([db.WriteTeamStats(Teamsdata), db.WriteTeamProjects(Teamsdata), db.WriteMemberStats(Memberdata)]).then((result) => {
+                console.log(result)
+            }).catch((error) => {
+                console.error(error);
+            });
+    
+        }).catch((error) => {
+            console.error(error);
+        });
+    
+    }).catch((error) => {
+        console.error(error);
+    });
+});
 
+
+/*
 getData.getTeamData("FPC25HV6C2").then((Teamsdata) => {
     getData.getMemberData("FPC25HV6C2").then((Memberdata) => {
         
@@ -30,3 +50,4 @@ getData.getTeamData("FPC25HV6C2").then((Teamsdata) => {
 }).catch((error) => {
     console.error(error);
 });
+*/

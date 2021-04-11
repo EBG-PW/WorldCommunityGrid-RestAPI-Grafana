@@ -138,9 +138,19 @@ let WriteMemberStats = function(Data) {
   });
 }
 
+let GetTeams = function(Data) {
+  return new Promise(function(resolve, reject) {
+    pool.query('SELECT teamid FROM teams', (err, result) => {
+      if (err) {reject(err)}
+      resolve(result.rows)
+    });
+  });
+}
+
 module.exports = {
   WriteTeam,
   WriteTeamStats,
   WriteTeamProjects,
-  WriteMemberStats
+  WriteMemberStats,
+  GetTeams
 };
