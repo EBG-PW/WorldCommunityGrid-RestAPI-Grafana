@@ -85,6 +85,11 @@ pool.query(`CREATE TABLE IF NOT EXISTS teamstatsmember (
     });
 });
 
+/**
+ * This function will write the team to DB
+ * @param {Object} Data
+ * @returns {Promise}
+ */
 let WriteTeam = function(Data) {
   return new Promise(function(resolve, reject) {
     pool.query('INSERT INTO teams(Name,TeamId,Captain,URL,DateCreated,Country,Type,BoincId) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',[
@@ -96,6 +101,11 @@ let WriteTeam = function(Data) {
   });
 }
 
+/**
+ * This function will write the team total stats to DB
+ * @param {Object} Data
+ * @returns {Promise}
+ */
 let WriteTeamStats = function(Data) {
   return new Promise(function(resolve, reject) {
     pool.query('INSERT INTO teamstats(TeamId,CurrentMembers,CurrentMembersRank,AllTimeMembers,AllTimeMembersRank,AllTimeDevices,RunTime,RunTimeRank,Points,PointsRank,Results,ResultsRank,RunTimePerDay,RunTimePerResult,PointsPerHourRunTime,PointsPerDay,PointsPerResult,ResultsPerDay) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)',[
@@ -110,6 +120,11 @@ let WriteTeamStats = function(Data) {
   });
 }
 
+/**
+ * This function will write all Projects of a team to DB
+ * @param {Object} Data
+ * @returns {Promise}
+ */
 let WriteTeamProjects = function(Data) {
   return new Promise(function(resolve, reject) {
     Data.TeamStats.TeamStatsByProjects[0].Project.map(project => {
@@ -123,6 +138,11 @@ let WriteTeamProjects = function(Data) {
   });
 }
 
+/**
+ * This function will write all Members to DB
+ * @param {Object} Data
+ * @returns {Promise}
+ */
 let WriteMemberStats = function(Data) {
   return new Promise(function(resolve, reject) {
     Data.TeamMemberDetails.TeamMember.map(Member => {
@@ -138,7 +158,11 @@ let WriteMemberStats = function(Data) {
   });
 }
 
-let GetTeams = function(Data) {
+/**
+ * This function will return all teams that are in teams DB
+ * @returns Array
+ */
+let GetTeams = function() {
   return new Promise(function(resolve, reject) {
     pool.query('SELECT teamid FROM teams', (err, result) => {
       if (err) {reject(err)}
