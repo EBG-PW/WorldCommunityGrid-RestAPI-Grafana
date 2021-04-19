@@ -13,26 +13,6 @@ getData.getTeamData("FPC25HV6C2").then((data) => {
     console.error(error);
 });
 */
-db.GetTeams().then((data) => {
-    data.map(TeamID => {
-        getData.getTeamData(TeamID.teamid).then((Teamsdata) => {
-            getData.getMemberData(TeamID.teamid).then((Memberdata) => {
-            
-                Promise.all([db.WriteTeamStats(Teamsdata), db.WriteTeamProjects(Teamsdata), db.WriteMemberStats(Memberdata)]).then((result) => {
-                    console.log(`Collected Stats of team: ${TeamID.teamid}`)
-                }).catch((error) => {
-                    console.error(error);
-                });
-        
-            }).catch((error) => {
-                console.error(error);
-            });
-        }).catch((error) => {
-            console.error(error);
-        });
-    });
-});
-
 
 /*
 getData.getTeamData("FPC25HV6C2").then((Teamsdata) => {
@@ -52,3 +32,38 @@ getData.getTeamData("FPC25HV6C2").then((Teamsdata) => {
     console.error(error);
 });
 */
+
+function getHourDE(date) {
+
+	var hour = date.getHours();
+	hour = (hour < 10 ? "0" : "") + hour;
+	
+	var min  = date.getMinutes();
+	min = (min < 10 ? "0" : "") + min;
+
+    return `${hour}${min}`
+}
+
+setInterval(function(){
+    if(getHourDE(new Date()) === '2000'){
+        db.GetTeams().then((data) => {
+            data.map(TeamID => {
+                getData.getTeamData(TeamID.teamid).then((Teamsdata) => {
+                    getData.getMemberData(TeamID.teamid).then((Memberdata) => {
+                    
+                        Promise.all([db.WriteTeamStats(Teamsdata), db.WriteTeamProjects(Teamsdata), db.WriteMemberStats(Memberdata)]).then((result) => {
+                            console.log(`Collected Stats of team: ${TeamID.teamid}`)
+                        }).catch((error) => {
+                            console.error(error);
+                        });
+                
+                    }).catch((error) => {
+                        console.error(error);
+                    });
+                }).catch((error) => {
+                    console.error(error);
+                });
+            });
+        });
+    }
+}, 60000);
