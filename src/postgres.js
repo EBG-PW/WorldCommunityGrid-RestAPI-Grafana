@@ -171,10 +171,25 @@ let GetTeams = function() {
   });
 }
 
+/**
+ * This function will return the latest Stats of the requested team
+ * @param {String} TeamID
+ * @returns Array
+ */
+ let GetTeamStatsLatest = function(TeamID) {
+  return new Promise(function(resolve, reject) {
+    pool.query('SELECT * FROM teamstats WHERE teamid = TeamID ORDER BY time DESC LIMIT 1', (err, result) => {
+      if (err) {reject(err)}
+      resolve(result.rows)
+    });
+  });
+}
+
 module.exports = {
   WriteTeam,
   WriteTeamStats,
   WriteTeamProjects,
   WriteMemberStats,
-  GetTeams
+  GetTeams,
+  GetTeamStatsLatest
 };

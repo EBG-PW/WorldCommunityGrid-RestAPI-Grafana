@@ -1,6 +1,14 @@
+const app = require('./src/app');
 const getData = require('./src/getData')
 const db = require('./src/postgres')
 const util = require('util')
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  /* eslint-disable no-console */
+  console.log(`Listening: ${process.env.IP}:${port}`);
+  /* eslint-enable no-console */
+});
 
 /*
 getData.getTeamData("FPC25HV6C2").then((data) => {
