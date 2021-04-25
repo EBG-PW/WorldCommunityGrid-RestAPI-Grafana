@@ -17,8 +17,8 @@ const PluginAuthor = "BolverBlitz";
 const PluginDocs = "docs.ebg.pw";
 
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, 
-	max: 5
+	windowMs: 60 * 1000, 
+	max: 60
   });
 
 const router = express.Router();
